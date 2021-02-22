@@ -1,0 +1,10 @@
+package ih
+
+sourcedir = "src"
+
+modules = Main, Level
+
+main = Main
+executable = ih
+
+depends = contrib, sdl

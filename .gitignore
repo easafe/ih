@@ -1,0 +1,7 @@
+*.ibc
+*.o
+/build/
+
+todo
+
+scratch.md
