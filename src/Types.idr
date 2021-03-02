@@ -3,9 +3,11 @@ module Types
 import Data.SortedMap as DS
 
 import public Level.Types
-import public Npc.Types
 import public State.Types
-import public Player.Types
+import public Character.Types
+
+export
+data Current : Type where
 
 public export
 record CurrentState where

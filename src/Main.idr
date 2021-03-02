@@ -3,15 +3,16 @@ module Main
 import SDL as S
 import SDL.Types
 import Data.SortedMap as DS
-import SDL.Foreign
+import SDL.Foreign as SF
 import Control.Linear.LIO as LIO
 import System as SS
 
 import Renderer as R
+import Events as E
 import Level.Types
 import State as ST
 import Level.Basics as LC
-import Player as P
+import Character.Player as CP
 import Level.Prefab.Room as LPR
 import Types
 
@@ -21,11 +22,6 @@ defaultWindowOpts = MkSDLWindowOptions "ih" SDLWindowPosCentered SDLWindowPosCen
 putError : LinearIO io => (err : SDLError) -> L io ()
 putError = putStrLn . show
 
-onKeyEvent : LinearIO io => (event : SDLKeyboardEvent) -> L io ()
-onKeyEvent evt = case evt.keycode of
-      KeyR => pure ()
-      _ => pure ()
-
 --https://dewitters.com/dewitters-gameloop/
 loop : (LinearIO io, Ref Current CurrentState) => (1 _ : SDL WithRenderer) -> L {use = 1} io (SDL WithRenderer)
 loop s = LIO.do
@@ -34,6 +30,7 @@ loop s = LIO.do
       case pp of
             Just (SDLQuit ** ()) => LIO.pure1 s
             Just (SDLKeyUp ** evt) => LIO.do
+                  E.processInput evt
                   s <- R.draw s
                   s <- render s
                   loop s
@@ -52,8 +49,7 @@ run' = S.initSDL [SDLInitVideo] (\err => putStrLn $ "Fatal error: " ++ show err)
 
       s <- R.draw s
       s <- render s
-    --  s <- loop s
-      SS.sleep 40
+      s <- loop s
 
       s <- S.closeRenderer s
       s <- S.closeWindow s
@@ -61,7 +57,6 @@ run' = S.initSDL [SDLInitVideo] (\err => putStrLn $ "Fatal error: " ++ show err)
 
 main : IO ()
 main = LIO.run $ do
-            room <- LPR.create
-            ST.newRef Current (MakeCurrentState Room room DS.empty P.create)
-            run'
-
+      room <- LPR.create
+      ST.newRef Current $ MakeCurrentState { area = Room, level = room, levels = DS.empty, player = CP.create }
+      run'

@@ -2,11 +2,18 @@ module Level.Types
 
 import Data.Vect as V
 import Data.List as L
-import Npc.Types
+import Character.Types
 import Data.SortedMap as M
 
 public export
+Coordinate : Type
+Coordinate = (Nat, Nat)
+
+public export
 data Area = Room | Hall | Easy | Medium | Hard
+
+public export
+data Direction = Left | Right | Top | TopRight | TopLeft | Down | DownRight | DownLeft
 
 export
 Eq Area where
@@ -48,4 +55,4 @@ record Level where
       name : String
       area : Area
       features : List Feature
-      npcs : List Npc
+      characters : List Character

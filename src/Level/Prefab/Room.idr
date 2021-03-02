@@ -1,9 +1,10 @@
 module Level.Prefab.Room
 
 import Level.Types
+import Character.Types
 import Level.Basics as LB
 import Level.List as LL
-import Npc.TestTaker as NT
+import Character.Npc.TestTaker as CNT
 
 export
 create : HasIO io => io Level
@@ -26,5 +27,5 @@ create = do
             room : Level
             room = record {
                         features $= LL.updateIndexes roomFeatures,
-                        npcs = [NT.create]
+                        characters = [N CNT.create]
                   } (LB.emptyLevel "room" Room)

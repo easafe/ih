@@ -8,6 +8,7 @@ import Renderer.Colors
 import Data.Nat
 import Data.List as DL
 import Level.Basics
+import Character as C
 import Types
 
 import Types
@@ -19,7 +20,7 @@ putError = putStrLn . show
 baseSize : Int
 baseSize = 16
 
-drawAt : (LinearIO io, Ref Current CurrentState) => (Nat, Nat) -> (1 _ : SDL WithRenderer) -> L {use = 1} io (SDL WithRenderer)
+drawAt : (LinearIO io, Ref Current CurrentState) => Coordinate -> (1 _ : SDL WithRenderer) -> L {use = 1} io (SDL WithRenderer)
 drawAt (x, y) s = L.do
       let rect = MkRect (cast x * baseSize) (cast y * baseSize) baseSize baseSize
       Success s <- S.fillRect rect s
@@ -49,13 +50,13 @@ drawLevel i (_ :: fs) s = L.do
       s <- drawAt (mod i width, div i width) s
       drawLevel (i + 1) fs s
 
-drawNpcs : (LinearIO io, Ref Current CurrentState) => List Npc -> (1 _ : SDL WithRenderer) -> L {use = 1} io (SDL WithRenderer)
-drawNpcs [] s = L.pure1 s
-drawNpcs (npc :: ns) s = L.do
+drawCharacters : (LinearIO io, Ref Current CurrentState) => List Character -> (1 _ : SDL WithRenderer) -> L {use = 1} io (SDL WithRenderer)
+drawCharacters [] s = L.pure1 s
+drawCharacters (character :: cs) s = L.do
       Success s <- S.setColor green s
             | Failure s err => L.do putError err; L.pure1 s
-      s <- drawAt npc.position s
-      drawNpcs ns s
+      s <- drawAt (C.position character) s
+      drawCharacters cs s
 
 drawPlayer : (LinearIO io, Ref Current CurrentState) => Player -> (1 _ : SDL WithRenderer) -> L {use = 1} io (SDL WithRenderer)
 drawPlayer player s = L.do
@@ -73,6 +74,6 @@ draw s = L.do
             | Failure s err => L.do putError err; L.pure1 s
       current <- ST.get Current
       s <- drawLevel 0 current.level.features s
-      s <- drawNpcs current.level.npcs s
+      s <- drawCharacters current.level.characters s
       s <- drawPlayer current.player s
       L.pure1 s
