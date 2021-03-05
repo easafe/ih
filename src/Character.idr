@@ -13,10 +13,10 @@ export
 move : Character -> Direction -> CurrentState -> CurrentState
 move character direction state = case character of
       N npc => state
-      P player => case L.move direction state.player.position of
-            Nothing => state
-            Just p =>
-                  if L.isAvailable p state then
-                        record { player.position = p } state
-                   else
+      P player => case L.move state.player.position direction state of
+            Left _ => state
+            Right (coordinate, feature) =>
+                  if feature == Solid || feature == Wall then
                         state
+                   else
+                        record { player.position = coordinate } state

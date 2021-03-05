@@ -49,10 +49,22 @@ Ord Area where
 public export
 data Feature = Solid | Floor | Wall | Door (Area, String)
 
+export
+Eq Feature where
+      Solid == Solid = True
+      Floor == Floor = True
+      Wall == Wall = True
+      Door (area, level) == Door (otherArea, otherLevel) = area == otherArea && level == otherLevel
+      _ == _ = False
+
+public export
+CoordinateFeature : Type
+CoordinateFeature = (Coordinate, Feature)
+
 public export
 record Level where
       constructor MakeLevel
       name : String
       area : Area
-      features : List Feature
+      features : List CoordinateFeature
       characters : List Character

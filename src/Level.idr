@@ -2,10 +2,12 @@ module Level
 
 import Types
 import Level.Basics
+import Data.List as DL
+import Level.Features as LF
+import Character.Basics as CB
 
-export
-move : Direction -> Coordinate -> Maybe Coordinate
-move direction (x, y) = case direction of
+to : Direction -> Coordinate -> Maybe Coordinate
+to direction (x, y) = case direction of
       Left => case x of
             Z => Nothing
             S k => Just (k, y)
@@ -30,6 +32,18 @@ move direction (x, y) = case direction of
                   Z => Nothing
                   S l => Just (k, l)
 
+at : Coordinate -> CurrentState -> Either Character Feature
+at coordinate state =
+      if state.player.position == coordinate then
+            Left $ P state.player
+       else case DL.find ( (coordinate ==) . CB.position) state.level.characters of
+            Just character => Left character
+            Nothing => Right $ LF.index coordinate state.level.features
+
 export
-isAvailable : Coordinate -> CurrentState -> Bool
-isAvailable (x, y) state =
+move : Coordinate -> Direction -> CurrentState -> Either Character CoordinateFeature
+move from direction state =
+      case to direction from of
+            Nothing => Right (from, Solid)
+            Just coordinate => map (\feature => (coordinate, feature)) $ at coordinate state
+
