@@ -22,5 +22,3 @@ index : Coordinate -> List CoordinateFeature -> Feature
 index coordinate features = case DL.find ((coordinate ==) . fst) features of
       Nothing => Solid
       Just (_, feature) => feature
-      -- where sameCoordinate : CoordinateFeature -> Bool
-      --       sameCoordinate (c, _) = coordinate == c

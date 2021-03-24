@@ -4,4 +4,4 @@ import Character.Types
 
 export
 create : Npc
-create = MakeNpc {position = (3, 1), letter = "T"}
+create = MakeNpc { position = (3, 1) }

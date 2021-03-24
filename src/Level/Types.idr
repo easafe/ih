@@ -1,9 +1,10 @@
 module Level.Types
 
-import Data.Vect as V
 import Data.List as L
-import Character.Types
 import Data.SortedMap as M
+
+
+import Character.Types
 
 public export
 Coordinate : Type
@@ -14,6 +15,18 @@ data Area = Room | Hall | Easy | Medium | Hard
 
 public export
 data Direction = Left | Right | Top | TopRight | TopLeft | Down | DownRight | DownLeft
+
+export
+Eq Direction where
+      Left == Left = True
+      Right == Right = True
+      Top == Top = True
+      TopRight == TopRight = True
+      TopLeft == TopLeft = True
+      Down == Down = True
+      DownRight == DownRight = True
+      DownLeft == DownLeft = True
+      _ == _ = False
 
 export
 Eq Area where

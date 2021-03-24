@@ -1,6 +1,6 @@
 *.ibc
 *.o
-/build/
+build/
 
 todo
 

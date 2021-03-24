@@ -6,11 +6,9 @@ import SDL.Types
 import SDL.Foreign
 import Renderer.Colors
 import Data.Nat
-import Data.List as DL
-import Level.Basics
-import Character as C
-import Types
 
+import Level.Basics
+import Character.Basics as CB
 import Types
 import State as ST
 
@@ -53,17 +51,14 @@ drawLevel ((coordinate, _) :: fs) s = L.do
 drawCharacters : (LinearIO io, Ref Current CurrentState) => List Character -> (1 _ : SDL WithRenderer) -> L {use = 1} io (SDL WithRenderer)
 drawCharacters [] s = L.pure1 s
 drawCharacters (character :: cs) s = L.do
-      Success s <- S.setColor green s
+      Success s <- S.setColor color s
             | Failure s err => L.do putError err; L.pure1 s
-      s <- drawAt (C.position character) s
+      s <- drawAt (CB.position character) s
       drawCharacters cs s
-
-drawPlayer : (LinearIO io, Ref Current CurrentState) => Player -> (1 _ : SDL WithRenderer) -> L {use = 1} io (SDL WithRenderer)
-drawPlayer player s = L.do
-      Success s <- S.setColor red s
-            | Failure s err => L.do putError err; L.pure1 s
-      s <- drawAt player.position s
-      L.pure1 s
+      where color : SDLColor
+            color = case character of
+                  N _ => green
+                  P _ => red
 
 export
 draw : (LinearIO io, Ref Current CurrentState) => (1 _ : SDL WithRenderer) -> L {use = 1} io (SDL WithRenderer)
@@ -74,6 +69,5 @@ draw s = L.do
             | Failure s err => L.do putError err; L.pure1 s
       current <- ST.get Current
       s <- drawLevel current.level.features s
-      s <- drawCharacters current.level.characters s
-      s <- drawPlayer current.player s
+      s <- drawCharacters (P current.player :: current.level.characters) s
       L.pure1 s

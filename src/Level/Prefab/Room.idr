@@ -3,7 +3,7 @@ module Level.Prefab.Room
 import Level.Types
 import Character.Types
 import Level.Basics as LB
-import Level.Features as LF
+import Level.Index as LI
 import Character.Npc.TestTaker as CNT
 
 export
@@ -26,6 +26,6 @@ create = do
 
             room : Level
             room = record {
-                        features $= LF.updateIndexes roomFeatures,
+                        features = roomFeatures,
                         characters = [N CNT.create]
                   } (LB.emptyLevel "room" Room)
